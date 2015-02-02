@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Gerador de Horários Compactos</title>
+    <link rel='stylesheet' type='text/css' media='screen' href='https://fenix.tecnico.ulisboa.pt/cursos/meic-a/static/css/publicPages.css' />
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
+    <script type="text/javascript">
+	  var courseCount = 0;
+	  
+      function showErrorMessage() { document.getElementById("errorMessage").style.visibility = "visible" }
+      function hideErrorMessage() { document.getElementById("errorMessage").style.visibility = "hidden" }
+      
+	  function processCourseURL() {
+        if (courseURL.value == '')
+          return
+        
+	    var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+		  if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            if (xmlhttp.responseText == '')
+              showErrorMessage();
+            else {
+              hideErrorMessage();
+              document.getElementById("courseURL").value = "";
+		      document.getElementById("courses").innerHTML += xmlhttp.responseText;
+            }
+		  }
+		}
+		
+		courseCount++;
+		var encodedURL = encodeURIComponent(document.getElementById("courseURL").value);
+		xmlhttp.open("POST", "process_course_url.php", true);
+		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+		xmlhttp.send("course_id="+courseCount + "&url="+encodedURL);
+	  }
+      
+      function removeCourse(course) { course.innerHTML = "" }
+	</script>
+  </head>
+  <body style="margin:15px">
+        <h2 style="font-family:'Verdana';font-size:16px">
+          <b> Gerador de Horários Compactos </b>
+        </h2>
+        <br>
+        
+        <div class="mtop1 coutput2" style="line-height: 1.5em;font-family:'Verdana';font-size:12px">
+        <ul>
+          <li>Introduza o URL de cada disciplina no formulário abaixo e prima o botão [+].</li>
+              (e.g. para Álgebra Linear - LEIC-A, introduza <i>https://fenix.tecnico.ulisboa.pt/disciplinas/AL425/2014-2015/1-semestre</i>)
+          <li>Pode de seguida escolher os tipos de aula a incluir no horário (i.e. teóricas, laboratórios, etc).</li>
+          <li>Para terminar, prima [Submit].</li>
+        </ul>
+        </div>
+        <br>
+        
+        <div id='errorMessage' style="font-family:'Verdana';color:#DD0000;visibility:hidden">Ocorreu um erro na obtenção da disciplina. É possível que o URL esteja mal formado.</div>
+        
+        <form action="generate_timetables.php" method="post">
+          <p style="font-family:'Verdana'">
+            URL: <input type="text" id="courseURL" value="" size="80px" onkeypress="if (event.keyCode == 13) { processCourseURL(); return false; }" >
+            <button type="button" onclick="processCourseURL()">+</button>
+            <input type="submit" value="Submit">
+          </p>
+          <div id="courses">
+            <!-- html is inserted here -->
+          </div>
+        </form>
+
+        <div id="footer" class="mtop1 coutput2" style="line-height: 4em;font-family:'Verdana';font-size:10px">
+            Copyright &copy 2013-2015 Pedro P. Ramos
+        </div>
+        
+  </body>
+</html>
