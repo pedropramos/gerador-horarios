@@ -8,7 +8,7 @@ foreach($_POST as $x=>$x_value) {
 
 $datetime = date('d/m/Y H:i:s');
 $ip = $_SERVER['REMOTE_ADDR'];
-$command = "python horarios.py $args";
+$command = "/usr/bin/python horarios.py $args";
 
 echo shell_exec("echo [$datetime] \\($ip\\) $command >> commands.log");
 echo shell_exec($command);
